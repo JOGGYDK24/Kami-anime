@@ -3,51 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kami Anime Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Kami Anime | Pro</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo" onclick="location.reload()">
-            <span class="k-brand">K</span>
-            <span class="logo-text">Kami<b>Anime</b></span>
-        </div>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar..." onkeyup="if(event.key==='Enter') searchAnime()">
-        </div>
+    <nav class="side-nav">
+        <div class="logo" onclick="app.irInicio()">K<span>A</span></div>
+        <button onclick="app.irInicio()"><i class="fas fa-home"></i></button>
+        <button onclick="app.showSection('favoritos')"><i class="fas fa-heart"></i></button>
     </nav>
 
-    <main id="anime-grid" class="container"></main>
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="search-box">
+                <input type="text" id="inputBusqueda" placeholder="Buscar anime..." onkeyup="if(event.key==='Enter') app.buscar()">
+                <i class="fas fa-search" onclick="app.buscar()"></i>
+            </div>
+        </header>
+
+        <section id="sec-inicio" class="section active">
+            <h2 id="section-title">Animes Populares</h2>
+            <div class="grid" id="grid-principal"></div>
+            <div class="pagination-bar">
+                <button onclick="app.siguientePagina()" class="btn-more">Cargar más</button>
+            </div>
+        </section>
+
+        <section id="sec-favoritos" class="section">
+            <h2>Mi Lista</h2>
+            <div class="grid" id="grid-favoritos"></div>
+        </section>
+
+        <section id="sec-detalles" class="section"></section>
+
+        <div id="loader" class="loader-container" style="display:none;"><div class="spinner"></div></div>
+    </main>
 
     <div id="player-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <img id="anime-banner" src="" class="banner-img">
-                <div class="header-overlay"></div>
-                <button class="close-modal" onclick="closePlayer()">&times;</button>
+            <div class="player-header">
+                <h3 id="p-title">Reproductor</h3>
+                <span class="close-btn" onclick="app.cerrarPlayer()">&times;</span>
             </div>
-
-            <div class="anime-details">
-                <h2 id="modal-title">Cargando...</h2>
-                <p id="modal-desc">Traduciendo descripción...</p>
-            </div>
-
-            <div id="video-area" class="video-section" style="display:none;">
-                <div class="server-tabs">
-                    <button onclick="changeServer(1)" id="srv1" class="tab active">SERVIDOR 1</button>
-                    <button onclick="changeServer(2)" id="srv2" class="tab">SERVIDOR 2</button>
-                    <button onclick="changeServer(3)" id="srv3" class="tab">OPCIÓN GAMMA</button>
-                </div>
-                <div class="player-wrapper">
-                    <div id="video-container"></div>
-                </div>
-            </div>
-
-            <div class="episodes-section">
-                <h3>Lista de Episodios</h3>
-                <div id="episode-list" class="ep-grid"></div>
+            <div class="server-selection" id="server-buttons"></div>
+            <div class="video-container">
+                <iframe id="kami-iframe" src="" allowfullscreen frameborder="0" referrerpolicy="no-referrer"></iframe>
             </div>
         </div>
     </div>
