@@ -1,9 +1,9 @@
-// --- PANEL DE CONTROL ---
+// --- PANEL DE CONTROL: Edita los servidores aquí ---
 const KAMI_CONFIG = {
     servidores: [
-        { nombre: "ALPHA", url: "https://vidsrc.me/embed/anime?mal_id={id}&episode={ep}", color: "#d32f2f" },
-        { nombre: "BETA", url: "https://vidsrc.to/embed/anime/{id}/{ep}", color: "#7b1fa2" },
-        { nombre: "GAMMA", url: "https://multiembed.mov/direct?video_id={name}&episode={ep}", color: "#00796b" }
+        { nombre: "ALPHA", url: "https://vidsrc.me/embed/anime?mal_id={id}&episode={ep}", color: "#e91e63" },
+        { nombre: "BETA", url: "https://vidsrc.to/embed/anime/{id}/{ep}", color: "#673ab7" },
+        { nombre: "GAMMA", url: "https://multiembed.mov/direct?video_id={name}&episode={ep}", color: "#009688" }
     ]
 };
 
@@ -52,28 +52,28 @@ const app = {
             this.currentId = id;
             this.currentName = a.title_english || a.title;
 
-            // Traducción Automática al Español
-            let descEs = "Traduciendo...";
+            // Traductor Automático
+            let descEs = "Traduciendo sinopsis...";
             try {
                 const tr = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=es&dt=t&q=${encodeURIComponent(a.synopsis || '')}`);
                 const trJ = await tr.json();
                 descEs = trJ[0].map(x => x[0]).join('');
-            } catch { descEs = a.synopsis; }
+            } catch { descEs = a.synopsis || "Sin descripción."; }
 
             this.showSection('detalles');
             document.getElementById('sec-detalles').innerHTML = `
-                <button onclick="app.irInicio()" class="ep-btn" style="margin-bottom:20px;">← Volver</button>
+                <button onclick="app.irInicio()" class="sv-btn" style="background:#3d346b; width:auto; margin-bottom:20px;">← Volver</button>
                 <div class="detail-header">
                     <img src="${a.images.jpg.large_image_url}" class="detail-img">
                     <div class="detail-txt">
                         <h1>${a.title}</h1>
-                        <p>${descEs}</p>
+                        <p style="color:#aaa; line-height:1.5;">${descEs}</p>
                     </div>
                 </div>
                 <h3>Episodios</h3>
                 <div class="ep-grid">
                     ${Array.from({length: a.episodes || 12}, (_, i) => i + 1).map(num => 
-                        `<button class="ep-btn" onclick="app.abrirPlayer(${num})">Cap ${num}</button>`
+                        `<button class="ep-btn" onclick="app.abrirPlayer(${num})">Episodio ${num}</button>`
                     ).join('')}
                 </div>
             `;
@@ -84,9 +84,9 @@ const app = {
     abrirPlayer(ep) {
         this.currentEp = ep;
         document.getElementById('player-modal').style.display = 'block';
-        document.getElementById('p-title').innerText = `Capítulo ${ep}`;
+        document.getElementById('p-title').innerText = `Viendo Episodio ${ep}`;
         this.generarBotonesServidor();
-        this.cambiarServidor(0); // Carga Alpha por defecto
+        this.cambiarServidor(0); 
     },
 
     generarBotonesServidor() {
@@ -101,12 +101,12 @@ const app = {
     cambiarServidor(index) {
         const sv = KAMI_CONFIG.servidores[index];
         const frame = document.getElementById('kami-iframe');
-        const name = encodeURIComponent(this.currentName.replace(/[^a-zA-Z0-9 ]/g, ""));
+        const cleanName = encodeURIComponent(this.currentName.replace(/[^a-zA-Z0-9 ]/g, ""));
         
         frame.src = sv.url
             .replace("{id}", this.currentId)
             .replace("{ep}", this.currentEp)
-            .replace("{name}", name);
+            .replace("{name}", cleanName);
     },
 
     cerrarPlayer() {
