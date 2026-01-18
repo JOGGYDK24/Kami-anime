@@ -1,62 +1,77 @@
 :root {
     --primary: #ff5722;
-    --bg: #18142e; /* El color azul oscuro de tu código */
+    --bg: #18142e;
     --header: #282248;
     --card: #201b3d;
     --text: #ffffff;
 }
 
 body { 
-    background: var(--bg); 
-    color: var(--text); 
-    margin: 0; 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    display: flex;
-    overflow-x: hidden;
+    background: var(--bg); color: var(--text); margin: 0; 
+    font-family: 'Segoe UI', sans-serif; display: flex; overflow-x: hidden;
 }
 
-/* Sidebar */
-.side-nav { 
-    width: 70px; 
-    height: 100vh; 
-    background: var(--header); 
-    position: fixed; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    z-index: 1000;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.3);
-}
-
+/* Navegación */
+.side-nav { width: 70px; height: 100vh; background: var(--header); position: fixed; display: flex; flex-direction: column; align-items: center; z-index: 1000; }
 .logo { color: var(--primary); font-size: 26px; font-weight: bold; margin: 20px 0; cursor: pointer; }
-.side-nav button { background: none; border: none; color: #8a81b5; font-size: 24px; margin: 20px 0; cursor: pointer; }
+.side-nav button { background: none; border: none; color: #8a81b5; font-size: 24px; margin: 20px 0; cursor: pointer; transition: 0.3s; }
+.side-nav button:hover { color: var(--primary); transform: scale(1.2); }
 
-/* Main Content */
-.main-content { margin-left: 70px; width: calc(100% - 70px); padding: 20px; }
-.section { display: none; animation: fadeIn 0.3s ease-in; }
+/* Contenido */
+.main-content { margin-left: 70px; width: calc(100% - 70px); padding: 20px; box-sizing: border-box; }
+.section { display: none; animation: fadeIn 0.4s ease; }
 .section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* Tarjetas Animadas */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+.card { 
+    background: var(--card); border-radius: 12px; overflow: hidden; 
+    cursor: pointer; transition: 0.3s; position: relative;
+    border-bottom: 4px solid transparent;
+}
+.card:hover { 
+    transform: translateY(-8px); 
+    border-bottom: 4px solid var(--primary); 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
+.card img { width: 100%; height: 200px; object-fit: cover; }
+.card-title { padding: 10px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.search-box { background: var(--header); padding: 12px 25px; border-radius: 30px; display: flex; align-items: center; border: 1px solid #3d346b; }
-.search-box input { background: none; border: none; color: white; width: 100%; outline: none; font-size: 16px; }
-
-/* Cards */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
-.card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #2d2654; cursor: pointer; transition: 0.3s; }
-.card:hover { transform: translateY(-5px); border-color: var(--primary); }
-.card img { width: 100%; height: 210px; object-fit: cover; }
-.card-title { padding: 10px; font-size: 13px; text-align: center; height: 40px; overflow: hidden; }
-
-/* Reproductor Modal */
+/* Reproductor Responsivo */
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; }
-.modal-content { width: 95%; max-width: 850px; margin: 2% auto; background: #000; border-radius: 15px; overflow: hidden; }
-.server-selection { display: flex; gap: 8px; padding: 12px; background: #1a1635; overflow-x: auto; }
-.sv-btn { flex: 1; border: none; padding: 12px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; min-width: 100px; }
-.video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
-.video-container iframe { position: absolute; top:0; left:0; width:100%; height:100%; }
+.modal-content { 
+    width: 95%; max-width: 800px; margin: 5% auto; 
+    background: #000; border-radius: 15px; overflow: hidden; 
+}
+
+/* ESTO CORRIGE QUE SE SALGA DE LA PANTALLA */
+.video-container { 
+    position: relative; width: 100%; padding-bottom: 56.25%; /* Relación 16:9 */
+    height: 0; background: #000; 
+}
+.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+/* Botones de Episodios con Barrita Animada */
+.ep-btn { 
+    background: #2d2654; color: white; border: none; padding: 12px; 
+    border-radius: 6px; cursor: pointer; position: relative; overflow: hidden;
+    transition: 0.3s;
+}
+.ep-btn::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 0; height: 3px; background: var(--primary); transition: 0.3s;
+}
+.ep-btn:hover::after { width: 100%; }
+.ep-btn:hover { background: #3d346b; }
+
+/* Botón de Emergencia */
+.btn-emergency {
+    display: block; background: #ff5722; color: white; text-decoration: none;
+    text-align: center; padding: 12px; font-weight: bold; font-size: 13px;
+}
 
 /* Spinner */
 .loader-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-.spinner { border: 4px solid #3d346b; border-left-color: var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+.spinner { border: 4px solid #3d346b; border-left-color: var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
