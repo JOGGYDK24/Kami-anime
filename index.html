@@ -31,6 +31,11 @@
             </div>
         </section>
 
+        <section id="sec-favoritos" class="section">
+            <h2>Mi Lista</h2>
+            <div class="grid" id="grid-favoritos"></div>
+        </section>
+
         <section id="sec-detalles" class="section"></section>
 
         <div id="loader" class="loader-container" style="display:none;"><div class="spinner"></div></div>
@@ -42,9 +47,18 @@
                 <h3 id="p-title">Reproductor</h3>
                 <span class="close-btn" onclick="app.cerrarPlayer()">&times;</span>
             </div>
+
+            <div id="container-emergencia" style="padding: 10px; text-align: center;">
+                <a id="link-emergencia" href="#" target="_blank" 
+                   style="display: block; background: #ff5722; color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; border: 1px solid #ffffff33;">
+                   🚀 SI NO CARGA EL VIDEO, TOCA AQUÍ
+                </a>
+            </div>
+
             <div class="server-selection" id="server-buttons"></div>
+
             <div class="video-container">
-                <iframe id="kami-iframe" src="" allowfullscreen frameborder="0" referrerpolicy="no-referrer"></iframe>
+                <iframe id="kami-iframe" src="" allowfullscreen frameborder="0" referrerpolicy="no-referrer" allow="autoplay; encrypted-media"></iframe>
             </div>
         </div>
     </div>
