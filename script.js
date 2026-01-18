@@ -1,7 +1,7 @@
 const KAMI_CONFIG = {
     servidores: [
-        { nombre: "SERVIDOR ALPHA", url: "https://vidsrc.pro/embed/anime/{id}/{ep}", color: "#e91e63" },
-        { nombre: "SERVIDOR BETA", url: "https://vidsrc.cc/v2/embed/anime/{id}/{ep}", color: "#673ab7" }
+        { nombre: "SERVER 1", url: "https://vidsrc.pro/embed/anime/{id}/{ep}", color: "#e91e63" },
+        { nombre: "SERVER 2", url: "https://vidsrc.cc/v2/embed/anime/{id}/{ep}", color: "#673ab7" }
     ]
 };
 
@@ -10,7 +10,6 @@ const app = {
     busqueda: '',
     currentId: null,
     currentName: '',
-    currentEp: 1,
 
     init() {
         this.fetchAnimes();
@@ -32,7 +31,6 @@ const app = {
 
     renderGrid(list, append) {
         const container = document.getElementById('grid-principal');
-        if(!container) return;
         const html = list.map(a => `
             <div class="card" onclick="app.verDetalles(${a.mal_id})">
                 <img src="${a.images.jpg.large_image_url}" referrerpolicy="no-referrer">
@@ -47,25 +45,21 @@ const app = {
         try {
             const res = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
             const { data: a } = await res.json();
-            
             this.currentId = id;
             this.currentName = a.title_english || a.title;
 
-            // Traducción Simple
-            let descEs = a.synopsis || "Sin descripción.";
-
             this.showSection('detalles');
             document.getElementById('sec-detalles').innerHTML = `
-                <button onclick="app.irInicio()" class="ep-btn" style="margin-bottom:20px; background:#444;">← Volver</button>
-                <div class="detail-header">
-                    <img src="${a.images.jpg.large_image_url}" class="detail-img">
-                    <div class="detail-txt">
+                <button onclick="app.irInicio()" class="ep-btn" style="margin-bottom:20px;">← Volver</button>
+                <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                    <img src="${a.images.jpg.large_image_url}" style="width:150px; border-radius:10px;">
+                    <div style="flex:1; min-width:250px;">
                         <h1>${a.title}</h1>
-                        <p>${descEs}</p>
+                        <p style="color:#aaa;">${a.synopsis || "Sin descripción."}</p>
                     </div>
                 </div>
                 <h3>Episodios</h3>
-                <div class="ep-grid">
+                <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap:10px;">
                     ${Array.from({length: a.episodes || 12}, (_, i) => i + 1).map(num => 
                         `<button class="ep-btn" onclick="app.abrirPlayer(${num})">Cap ${num}</button>`
                     ).join('')}
@@ -78,6 +72,7 @@ const app = {
     abrirPlayer(ep) {
         this.currentEp = ep;
         document.getElementById('player-modal').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Bloquea scroll fondo
         this.generarBotonesServidor();
         this.cambiarServidor(0); 
     },
@@ -85,7 +80,7 @@ const app = {
     generarBotonesServidor() {
         const container = document.getElementById('server-buttons');
         container.innerHTML = KAMI_CONFIG.servidores.map((sv, index) => `
-            <button onclick="app.cambiarServidor(${index})" class="sv-btn" style="background:${sv.color}">
+            <button onclick="app.cambiarServidor(${index})" class="ep-btn" style="flex:1; background:${sv.color}; margin:5px;">
                 ${sv.nombre}
             </button>
         `).join('');
@@ -95,31 +90,29 @@ const app = {
         const sv = KAMI_CONFIG.servidores[index];
         const frame = document.getElementById('kami-iframe');
         const url = sv.url.replace("{id}", this.currentId).replace("{ep}", this.currentEp);
-        
-        // Actualizar el enlace de emergencia
-        const linkEmergencia = document.getElementById('link-emergencia');
-        if(linkEmergencia) {
-            linkEmergencia.href = url;
-        }
-
+        document.getElementById('link-emergencia').href = url;
         frame.src = url;
     },
 
     cerrarPlayer() {
         document.getElementById('player-modal').style.display = 'none';
+        document.body.style.overflow = 'auto'; 
         document.getElementById('kami-iframe').src = "";
+    },
+
+    buscar() {
+        this.busqueda = document.getElementById('inputBusqueda').value;
+        this.pagina = 1; this.showSection('inicio'); this.fetchAnimes();
+    },
+
+    irInicio() {
+        this.busqueda = ''; this.pagina = 1; this.showSection('inicio'); this.fetchAnimes();
     },
 
     showSection(id) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.getElementById(`sec-${id}`).classList.add('active');
         window.scrollTo(0,0);
-    },
-
-    irInicio() {
-        this.busqueda = ''; this.pagina = 1;
-        this.showSection('inicio');
-        this.fetchAnimes();
     },
 
     toggleLoading(s) { document.getElementById('loader').style.display = s ? 'block' : 'none'; }
